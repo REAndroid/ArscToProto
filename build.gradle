@@ -1,0 +1,37 @@
+
+apply plugin: 'java-library'
+
+group 'com.reandroid.arsctoproto'
+version '1.0.0'
+
+java {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.compileJava {
+            //options.addStringOption('-Xlint:unchecked', '-quiet')
+        }
+    }
+}
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+processResources {
+    filesMatching('lib.properties') {
+        expand('version': version)
+    }
+}
+dependencies {
+    compile(files("$rootProject.projectDir/libs/ARSCLib-1.0.1.jar"))
+    compile(files("$rootProject.projectDir/libs/PROTOLib-1.0.0.jar"))
+}
+task fatJar(type: Jar) {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
